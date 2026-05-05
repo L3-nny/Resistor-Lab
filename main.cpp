@@ -1,3 +1,12 @@
+/* 
+ * Project: Resistor Library (Friend Function Refactor)
+ * Author: Lenny Mubea
+ * Description: Educational framework for EEE students to master C++ encapsulation.
+ */
+
+
+
+
 #include <iostream>
 #include <string>
 
