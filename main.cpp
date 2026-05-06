@@ -42,9 +42,14 @@ double calculatePower(double current, const Resistor& r) {
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
-    double p = calculatePower(0.06, r1); 
 
-    cout << "Power for " << r1.getL() << " is: " << p << "W" << endl;
+    // Test 1: high current — should trigger warning
+    double p1 = calculatePower(0.06, r1);
+    cout << "Power for " << r1.getL() << " is: " << p1 << "W" << endl;
+
+    // Test 2: safe current — should not trigger warning
+    double p2 = calculatePower(0.01, r2);
+    cout << "Power for " << r2.getL() << " is: " << p2 << "W" << endl;
 
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
     return 0;
