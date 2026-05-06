@@ -47,4 +47,3 @@ cout<< "At " << temp << "C, " << r1.getL() << " is assumed to be " << assumedR1 
 cout<< "At " << temp << "C, " << r2.getL() << " is assumed to be " << assumedR2 << " Ohms" << endl;
 
     return 0;
-}
