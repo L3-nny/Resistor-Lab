@@ -31,23 +31,6 @@ public:
 
 };
 
-    //Definition of friend fuction toleranceRange
-void  toleranceRange(const Resistor& r, double& rMin, double& rMax) {
-rMin = r.resistance * (1 - r.tolerance);
-rMax = r.resistance * (1 + r.tolerance);
-}
-
-//Definition of friend fuction calculatePower
-double calculatePower(double current, const Resistor& r) {
-    double power = (current * current) * r.resistance;
-
-    if (power > 0.25) {
-        cout << "WARNING: Power dissipation of " << power << "W exceeds the 0.25W limit for resistor " << r.label << "!" << endl;
-    }
-
-    return power;
-}
-
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
@@ -74,4 +57,21 @@ int main() {
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
 
     return 0;
+}
+
+    //Definition of friend fuction toleranceRange
+void  toleranceRange(const Resistor& r, double& rMin, double& rMax) {
+rMin = r.resistance * (1 - r.tolerance);
+rMax = r.resistance * (1 + r.tolerance);
+}
+
+//Definition of friend fuction calculatePower
+double calculatePower(double current, const Resistor& r) {
+    double power = (current * current) * r.resistance;
+
+    if (power > 0.25) {
+        cout << "WARNING: Power dissipation of " << power << "W exceeds the 0.25W limit for resistor " << r.label << "!" << endl;
+    }
+
+    return power;
 }
