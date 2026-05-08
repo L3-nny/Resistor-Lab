@@ -28,7 +28,7 @@ public:
     friend void toleranceRange(const Resistor& r, double& rMin, double& rMax);
     friend double calculatePower(double current, const Resistor& r);
     friend double voltageDrop(const Resistor& r, double current);
-    friend double ThermalDerating(const Resistor& r, double tempC);
+    friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
 };
 
 int main() {
@@ -71,10 +71,11 @@ int main() {
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
    
 double temp = 75.0;
-double assumedR1 = ThermalDerating(r1, temp);
-double assumedR2 = ThermalDerating(r2, temp);
-cout<< "At " << temp << "C, " << r1.getL() << " is assumed to be " << assumedR1 << " Ohms" << endl;
-cout<< "At " << temp << "C, " << r2.getL() << " is assumed to be " << assumedR2 << " Ohms" << endl;
+double ratedPower = 0.25;
+double maxPowerR1 = thermalDeratedMaxPower(r1, ratedPower, temp);
+double maxPowerR2 = thermalDeratedMaxPower(r2, ratedPower, temp);
+cout<< "At " << temp << "C, max derated power for " << r1.getL() << " is " << maxPowerR1 << "W" << endl;
+cout<< "At " << temp << "C, max derated power for " << r2.getL() << " is " << maxPowerR2 << "W" << endl;
 
     return 0;
 }
@@ -102,6 +103,17 @@ double voltageDrop(const Resistor& r, double current) {
 }
 
 //thermal derating function definition
-double ThermalDerating(const Resistor& r, double tempC) {
-    return r.resistance * (1. + 0.004 * (tempC - 25.0)); // linear derating model
+double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC) {
+    (void)r;
+    const double deratingStartC = 70.0;
+    const double maxTempC = 155.0;
+
+    if (ambientTempC <= deratingStartC) {
+        return ratedPowerW;
+    }
+    if (ambientTempC >= maxTempC) {
+        return 0.0;
+    }
+
+    return ratedPowerW * (1.0 - ((ambientTempC - deratingStartC) / (maxTempC - deratingStartC)));
 }
