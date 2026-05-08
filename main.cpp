@@ -24,21 +24,12 @@ public:
     // Getter for the label for access in the main function
     string getL() const { return label; }
 
-
-    // Friend declaration
-    friend double voltageDrop(const Resistor& r, double current);
-       // Declaration of the friend function
+    // Declaration of the friend functions
     friend void toleranceRange(const Resistor& r, double& rMin, double& rMax);
-
-     friend double calculatePower(double current, const Resistor& r);
-
+    friend double calculatePower(double current, const Resistor& r);
+    friend double voltageDrop(const Resistor& r, double current);
+    friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
 };
-
-// Function definition using Ohm's Law (V = I * R)
-double voltageDrop(const Resistor& r, double current) {
-    // Directly accessing private member 'resistance'
-    return current * r.resistance;
-}
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
@@ -55,15 +46,18 @@ int main() {
     cout << "Voltage drop for " << r1.getL() << ": " << v1 << "V" << endl;
     cout << "Voltage drop for " << r2.getL() << ": " << v2 << "V" << endl;
 
+
+    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
+
      double minVal, maxVal;
 
     //Display range for resistor 1
     toleranceRange(r1, minVal, maxVal);
-    cout << r1.getL() << "Range: " << minVal << "Ohms to " << maxVal << "Ohms" << endl;
+    cout << r1.getL() << " Range: " << minVal << " Ohms to " << maxVal << " Ohms" << endl;
 
     //Display range for resistor 2
     toleranceRange(r2, minVal, maxVal); 
-     cout << r2.getL() << "Range: " << minVal << "Ohms to " << maxVal << "Ohms" << endl;
+    cout << r2.getL() << " Range: " << minVal << " Ohms to " << maxVal << " Ohms" << endl;
 
 
     // Power Test 1: high current — should trigger warning
@@ -75,11 +69,18 @@ int main() {
     cout << "Power for " << r2.getL() << " is: " << p2 << "W" << endl;
 
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
+   
+double temp = 75.0;
+double ratedPower = 0.25;
+double maxPowerR1 = thermalDeratedMaxPower(r1, ratedPower, temp);
+double maxPowerR2 = thermalDeratedMaxPower(r2, ratedPower, temp);
+cout<< "At " << temp << "C, max derated power for " << r1.getL() << " is " << maxPowerR1 << "W" << endl;
+cout<< "At " << temp << "C, max derated power for " << r2.getL() << " is " << maxPowerR2 << "W" << endl;
 
     return 0;
 }
 
-    //Definition of friend fuction toleranceRange
+ //Definition of friend fuction toleranceRange
 void  toleranceRange(const Resistor& r, double& rMin, double& rMax) {
 rMin = r.resistance * (1 - r.tolerance);
 rMax = r.resistance * (1 + r.tolerance);
@@ -94,4 +95,24 @@ double calculatePower(double current, const Resistor& r) {
     }
 
     return power;
+}
+
+//Definition of friend function voltageDrop
+double voltageDrop(const Resistor& r, double current) {
+    return current * r.resistance;
+}
+
+//thermal derating function definition
+double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambientTempC) {
+    const double deratingStartC = 70.0;
+    const double maxTempC = 155.0;
+
+    if (ambientTempC <= deratingStartC) {
+        return ratedPowerW;
+    }
+    if (ambientTempC >= maxTempC) {
+        return 0.0;
+    }
+
+    return ratedPowerW * (1.0 - ((ambientTempC - deratingStartC) / (maxTempC - deratingStartC)));
 }
