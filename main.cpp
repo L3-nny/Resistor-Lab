@@ -6,11 +6,11 @@
 
 
 
-
 #include <iostream>
 #include <string>
 
 using namespace std;
+
 
 class Resistor {
 private:
@@ -24,19 +24,27 @@ public:
     // Getter for the label for access in the main function
     string getL() const { return label; }
 
-
-friend double ThermalDerating(const Resistor& r, double tempC);
-       // Declaration of the friend function
+    // Declaration of the friend functions
     friend void toleranceRange(const Resistor& r, double& rMin, double& rMax);
-
-     friend double calculatePower(double current, const Resistor& r);
- 
+    friend double calculatePower(double current, const Resistor& r);
+    friend double voltageDrop(const Resistor& r, double current);
+    friend double ThermalDerating(const Resistor& r, double tempC);
 };
-
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
+
+    double currentVal = 0.025; // Example: 25mA
+
+    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
+
+    // Using the friend function
+    double v1 = voltageDrop(r1, currentVal);
+    double v2 = voltageDrop(r2, currentVal);
+
+    cout << "Voltage drop for " << r1.getL() << ": " << v1 << "V" << endl;
+    cout << "Voltage drop for " << r2.getL() << ": " << v2 << "V" << endl;
 
 
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
@@ -45,11 +53,11 @@ int main() {
 
     //Display range for resistor 1
     toleranceRange(r1, minVal, maxVal);
-    cout << r1.getL() << "Range: " << minVal << "Ohms to " << maxVal << "Ohms" << endl;
+    cout << r1.getL() << " Range: " << minVal << " Ohms to " << maxVal << " Ohms" << endl;
 
     //Display range for resistor 2
     toleranceRange(r2, minVal, maxVal); 
-     cout << r2.getL() << "Range: " << minVal << "Ohms to " << maxVal << "Ohms" << endl;
+    cout << r2.getL() << " Range: " << minVal << " Ohms to " << maxVal << " Ohms" << endl;
 
 
     // Power Test 1: high current — should trigger warning
@@ -86,6 +94,11 @@ double calculatePower(double current, const Resistor& r) {
     }
 
     return power;
+}
+
+//Definition of friend function voltageDrop
+double voltageDrop(const Resistor& r, double current) {
+    return current * r.resistance;
 }
 
 //thermal derating function definition
