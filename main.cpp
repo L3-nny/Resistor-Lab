@@ -103,8 +103,7 @@ double voltageDrop(const Resistor& r, double current) {
 }
 
 //thermal derating function definition
-double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC) {
-    (void)r;
+double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambientTempC) {
     const double deratingStartC = 70.0;
     const double maxTempC = 155.0;
 
