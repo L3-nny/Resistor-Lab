@@ -120,7 +120,7 @@ double acImpedance(const Resistor& r, double frequency) {
     if (frequency > 0) {
        X_C = 1 / (omega * C); 
     } 
-    if (frequency =0) {
+    if (frequency ==0) {
     
      X_C = 0 ; // Capacitive reactance 
     }
