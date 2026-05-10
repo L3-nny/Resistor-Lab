@@ -8,8 +8,8 @@
 
 #include <iostream>
 #include <string>
-#include <cmath>
 #include <iomanip>
+#include <cmath>
 
 using namespace std;
 
@@ -19,7 +19,7 @@ private:
     string label;
     double resistance; // in Ohms
     double tolerance;  // e.g., 0.05 for 5%
-    double freqency;      // in Hz (for future use, currently not utilized)
+    double freqency;      // in Hz (for future use, currently not utilized in calculations)
 
 public:
     Resistor(string l, double r, double t) : label(l), resistance(r), tolerance(t) {}
@@ -32,14 +32,14 @@ public:
     friend double calculatePower(double current, const Resistor& r);
     friend double voltageDrop(const Resistor& r, double current);
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
-    friend double acImpedance(const Resistor& r, double freqHz);
     friend double calculateParallel(const Resistor& r1, const Resistor& r2);
-
+    friend double acImpedance(const Resistor& r, double frequency);
 };
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
+
 
 
 
@@ -166,7 +166,6 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
     }
 
     return ratedPowerW * (1.0 - ((ambientTempC - deratingStartC) / (maxTempC - deratingStartC)));
-
 }
     
 //Definition of friend function calculateParallel
