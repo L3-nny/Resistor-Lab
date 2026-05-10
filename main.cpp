@@ -42,7 +42,6 @@ int main() {
 
 
 
-
     double frequency = 50;
     double Z1 = acImpedance(r1, frequency); // Calculate impedance
     double Z2 = acImpedance(r2, frequency); // Calculate impedance
