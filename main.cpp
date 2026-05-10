@@ -112,7 +112,7 @@ double result = calculateParallel(r1, r2);
 double acImpedance(const Resistor& r, double frequency) {
     const double omega = 2 * M_PI * frequency;
     const double C = 1e-12; // 1pF
-    const double X_C = 1 / (omega * C);
+    const double X_C = (frequency == 0) ? 0.0 : 1 / (omega * C);
 
     return sqrt(pow(r.resistance, 2) + pow(X_C, 2));
 }
