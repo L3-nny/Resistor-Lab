@@ -8,9 +8,7 @@
 
 #include <iostream>
 #include <string>
-#include <cmath>
 #include <iomanip>
-
 using namespace std;
 
 
@@ -19,7 +17,6 @@ private:
     string label;
     double resistance; // in Ohms
     double tolerance;  // e.g., 0.05 for 5%
-    double freqHz;      // in Hz (for future use, currently not utilized)
 
 public:
     Resistor(string l, double r, double t) : label(l), resistance(r), tolerance(t) {}
@@ -32,24 +29,12 @@ public:
     friend double calculatePower(double current, const Resistor& r);
     friend double voltageDrop(const Resistor& r, double current);
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
-    friend double acImpedance(const Resistor& r, double freqHz);
     friend double calculateParallel(const Resistor& r1, const Resistor& r2);
-
 };
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
-
-
-    double freqHz = 50;
-    double Z1 = acImpedance(r1, freqHz); // Calculate impedance
-    double Z2 = acImpedance(r2, freqHz); // Calculate impedance
-
-    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
-
-    cout << "Impedance of " << r1.getL() << ": " << Z1 << " Ohms" <<" At "<< freqHz << " Hz" << endl;
-    cout << "Impedance of " << r2.getL() << ": " << Z2 << " Ohms" << " At "<< freqHz << " Hz" << endl;
 
     double currentVal = 0.025; // Example: 25mA
 
@@ -107,25 +92,6 @@ double result = calculateParallel(r1, r2);
     return 0;
 }
 
-
- //Friend function definition
-double acImpedance(const Resistor& r, double freqHz) {
-  const double omega = 2 * M_PI * freqHz; 
-        double X_C = 0 ; // Capacitive reactance
-        double C = 1e-12; //12pF
-
-    // Prevent division by zero if capacitance is 0
-    if (freqHz > 0) {
-         X_C = 1 / (omega * C); 
-    } else {
-        
-    }
-
-    double Z = sqrt(pow(r.resistance, 2) + pow(( X_C), 2)); 
-    return Z;
-
-}
-
  //Definition of friend fuction toleranceRange
 void  toleranceRange(const Resistor& r, double& rMin, double& rMax) {
 rMin = r.resistance * (1 - r.tolerance);
@@ -161,7 +127,6 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
     }
 
     return ratedPowerW * (1.0 - ((ambientTempC - deratingStartC) / (maxTempC - deratingStartC)));
-
 }
     
 //Definition of friend function calculateParallel
