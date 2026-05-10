@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <string>
-
+#include <iomanip>
 using namespace std;
 
 
@@ -29,6 +29,7 @@ public:
     friend double calculatePower(double current, const Resistor& r);
     friend double voltageDrop(const Resistor& r, double current);
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
+    friend double calculateParallel(const Resistor& r1, const Resistor& r2);
 };
 
 int main() {
@@ -77,6 +78,17 @@ double maxPowerR2 = thermalDeratedMaxPower(r2, ratedPower, temp);
 cout<< "At " << temp << "C, max derated power for " << r1.getL() << " is " << maxPowerR1 << "W" << endl;
 cout<< "At " << temp << "C, max derated power for " << r2.getL() << " is " << maxPowerR2 << "W" << endl;
 
+
+double result = calculateParallel(r1, r2);
+
+    // Ensuring NO output if any value was negative (result would be -1.0)
+    if (result >= 0) {
+        cout << fixed << setprecision(2);
+        cout << "Equivalent Resistance: " << result << " Ohms" << endl;
+    }else {
+        cout << "Invalid resistor value detected." << endl;
+    }
+
     return 0;
 }
 
@@ -115,4 +127,18 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
     }
 
     return ratedPowerW * (1.0 - ((ambientTempC - deratingStartC) / (maxTempC - deratingStartC)));
+}
+    
+//Definition of friend function calculateParallel
+double calculateParallel(const Resistor& r1, const Resistor& r2) {
+    if (r1.resistance < 0 || r2.resistance < 0) {
+        return -1.0;
+    }
+    double req;
+    if (r1.resistance + r2.resistance == 0) {
+        req = 0;
+    } else{
+        req = (r1.resistance * r2.resistance) / (r1.resistance + r2.resistance);
+    }
+    return req;
 }
