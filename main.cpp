@@ -29,6 +29,7 @@ public:
     friend double calculatePower(double current, const Resistor& r);
     friend double voltageDrop(const Resistor& r, double current);
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
+    friend bool qcInspector(const Resistor& r,double measured );
 };
 
 int main() {
@@ -115,4 +116,18 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
     }
 
     return ratedPowerW * (1.0 - ((ambientTempC - deratingStartC) / (maxTempC - deratingStartC)));
+}
+
+//Definition of friend function QC inspector
+bool qcinspector(const resistor& r, double measured){
+    (|R_measured-R_nom|/R_nom<=tol),int=tol;
+
+     if (double measred * tol=< r){
+        return  true;
+     }
+     if (double measured * tol > r)
+     {
+        return false;
+     }
+     
 }
