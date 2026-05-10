@@ -25,12 +25,19 @@ public:
     double getR() const { return resistance; }
     double getT() const { return tolerance; }
     string getL() const { return label; }
+
+    friend double SeriesResistance(const Resistor& r1, const Resistor& r2) {
+        return r1.resistance + r2.resistance;
+    }
 };
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
 
+    double totalResistance = SeriesResistance(r1, r2);
+
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
+    cout << "Total Resistance in Series: " << totalResistance << " Ohms" << endl;
     return 0;
 }
