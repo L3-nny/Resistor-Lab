@@ -26,10 +26,13 @@ public:
     double getT() const { return tolerance; }
     string getL() const { return label; }
 
-    friend double SeriesResistance(const Resistor& r1, const Resistor& r2) {
-        return r1.resistance + r2.resistance;
+    friend double SeriesResistance(const Resistor& r1, const Resistor& r2) 
     }
 };
+
+SeriesResistance(const Resistor& r1, const Resistor& r2) {
+    return r1.resistance + r2.resistance; // Accessing private members directly
+}   
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
