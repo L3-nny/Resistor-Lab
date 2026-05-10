@@ -110,24 +110,11 @@ double result = calculateParallel(r1, r2);
 
  //Friend function definition
 double acImpedance(const Resistor& r, double frequency) {
-    
-  const double omega = 2 * M_PI * frequency; 
-       
-        double C = 1e-12; //12pF
-        double X_C;
+    const double omega = 2 * M_PI * frequency;
+    const double C = 1e-12; // 1pF
+    const double X_C = 1 / (omega * C);
 
-    // Prevent division by zero if capacitance is 0
-    if (frequency > 0) {
-       X_C = 1 / (omega * C); 
-    } 
-    if (frequency ==0) {
-    
-     X_C = 0 ; // Capacitive reactance 
-    }
-
-    double Z = sqrt(pow(r.resistance, 2) + pow((X_C), 2)); 
-    return Z;
-
+    return sqrt(pow(r.resistance, 2) + pow(X_C, 2));
 }
 
  //Definition of friend fuction toleranceRange
