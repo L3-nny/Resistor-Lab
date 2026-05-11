@@ -34,16 +34,13 @@ public:
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
     friend double calculateParallel(const Resistor& r1, const Resistor& r2);
     friend double acImpedance(const Resistor& r, double frequency);
-    friend double seriesCombiner(const Resistor& r1, const Resistor& r2);
 };
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
 
-    double totalResistance = seriesCombiner(r1, r2);
-    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
-    cout << "Equivalent Series Resistance: " << totalResistance << " Ohms" << endl;
+
 
     double frequency = 50;
     double Z1 = acImpedance(r1, frequency); // Calculate impedance
@@ -106,11 +103,10 @@ double result = calculateParallel(r1, r2);
     }else {
         cout << "Invalid resistor value detected." << endl;
     }
+
     return 0;
 }
-double seriesCombiner(const Resistor& r1, const Resistor& r2) {
-    return r1.resistance + r2.resistance; // Accessing private members directly
-    }
+
 
  //Friend function definition
 double acImpedance(const Resistor& r, double frequency) {
