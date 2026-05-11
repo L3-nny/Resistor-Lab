@@ -98,7 +98,8 @@ double testMeasured = 1040.0;
     cout << "\n--- QC Inspection ---" << endl;
     cout << "Testing " << r1.getL() << " with measured " << testMeasured << " Ohms..." << endl;
     
-    qcInspector(r1, testMeasured);
+    const bool qcPassed = qcInspector(r1, testMeasured);
+    cout << "QC status flag: " << (qcPassed ? "true" : "false") << endl;
 
     return 0;
 }
