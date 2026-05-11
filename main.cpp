@@ -27,6 +27,9 @@ public:
     // Getter for the label for access in the main function
     string getL() const { return label; }
 
+    friend double SeriesResistance(const Resistor& r1, const Resistor& r2) 
+    }
+
     // Declaration of the friend functions
     friend void toleranceRange(const Resistor& r, double& rMin, double& rMax);
     friend double calculatePower(double current, const Resistor& r);
@@ -37,9 +40,15 @@ public:
     friend double seriesCombiner(const Resistor& r1, const Resistor& r2);
 };
 
+SeriesResistance(const Resistor& r1, const Resistor& r2) {
+    return r1.resistance + r2.resistance; // Accessing private members directly
+}   
+
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
+
+    double totalResistance = SeriesResistance(r1, r2);
 
     double totalResistance = seriesCombiner(r1, r2);
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
@@ -106,8 +115,10 @@ double result = calculateParallel(r1, r2);
     }else {
         cout << "Invalid resistor value detected." << endl;
     }
+    cout << "Total Resistance in Series: " << totalResistance << " Ohms" << endl;
     return 0;
 }
+
 double seriesCombiner(const Resistor& r1, const Resistor& r2) {
     return r1.resistance + r2.resistance; // Accessing private members directly
     }
