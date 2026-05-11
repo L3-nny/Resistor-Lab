@@ -78,6 +78,17 @@ double maxPowerR2 = thermalDeratedMaxPower(r2, ratedPower, temp);
 cout<< "At " << temp << "C, max derated power for " << r1.getL() << " is " << maxPowerR1 << "W" << endl;
 cout<< "At " << temp << "C, max derated power for " << r2.getL() << " is " << maxPowerR2 << "W" << endl;
 
+    // qc_inspector
+double testMeasured = 1040.0; 
+    cout << "\n--- QC Inspection ---" << endl;
+    cout << "Testing " << r1.getL() << " with measured " << testMeasured << " Ohms..." << endl;
+    
+    if (qcInspector(r1, testMeasured)) {
+        cout << "RESULT: PASSED" << endl;
+    } else {
+        cout << "RESULT: FAILED (Outside tolerance)" << endl;
+    }
+
     return 0;
 }
 
@@ -119,15 +130,13 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
 }
 
 //Definition of friend function QC inspector
-bool qcinspector(const resistor& r, double measured){
-    (|R_measured-R_nom|/R_nom<=tol),int=tol;
+bool qcInspector(const Resistor& r, double measured) {
+    // Logic: Is |Nominal - Measured| within (Nominal * Tolerance)?
+    double maxDeviation = r.resistance * r.tolerance;
+    double actualDeviation = abs(r.resistance - measured);
 
-     if (double measred * tol=< r){
-        return  true;
-     }
-     if (double measured * tol > r)
-     {
-        return false;
-     }
+    return actualDeviation <= maxDeviation;
+}
+
      
 }
