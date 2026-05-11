@@ -99,7 +99,9 @@ double testMeasured = 1040.0;
     cout << "Testing " << r1.getL() << " with measured " << testMeasured << " Ohms..." << endl;
     
     const bool qcPassed = qcInspector(r1, testMeasured);
-    cout << "QC status flag: " << (qcPassed ? "true" : "false") << endl;
+    if (!qcPassed) {
+        cout << "Action: Investigate resistor deviation." << endl;
+    }
 
     return 0;
 }
@@ -157,7 +159,7 @@ bool qcInspector(const Resistor& r, double measured) {
     if (nominal <= 0.0) {
         cout << "Label: " << r.label
              << " | Result: FAILED"
-             << " | Deviation: N/A (invalid nominal resistance)" << endl;
+             << " | Deviation: N/A" << endl;
         return false;
     }
 
