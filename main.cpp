@@ -46,6 +46,13 @@ int main() {
     cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
     cout << "Equivalent Series Resistance: " << totalResistance << " Ohms" << endl;
 
+    // Second test case: r1 = 1500, r2 = 2000
+    Resistor r3("R3", 1500, 0.05);
+    Resistor r4("R4", 2000, 0.10);
+    double totalResistance2 = seriesCombiner(r3, r4);
+    cout << "Circuit initialized with " << r3.getL() << " and " << r4.getL() << endl;
+    cout << "Equivalent Series Resistance: " << totalResistance2 << " Ohms" << endl;
+
     double frequency = 50;
     double Z1 = acImpedance(r1, frequency); // Calculate impedance
     double Z2 = acImpedance(r2, frequency); // Calculate impedance
