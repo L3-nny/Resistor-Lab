@@ -98,11 +98,7 @@ double testMeasured = 1040.0;
     cout << "\n--- QC Inspection ---" << endl;
     cout << "Testing " << r1.getL() << " with measured " << testMeasured << " Ohms..." << endl;
     
-    if (qcInspector(r1, testMeasured)) {
-        cout << "RESULT: PASSED" << endl;
-    } else {
-        cout << "RESULT: FAILED (Outside tolerance)" << endl;
-    }
+    qcInspector(r1, testMeasured);
 
     return 0;
 }
@@ -156,9 +152,15 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
 
 //Definition of friend function QC inspector
 bool qcInspector(const Resistor& r, double measured) {
-    // Logic: Is |Nominal - Measured| within (Nominal * Tolerance)?
-    double maxDeviation = r.resistance * r.tolerance;
-    double actualDeviation = abs(r.resistance - measured);
+    const double nominal = r.resistance;
+    const double actualDeviation = abs(nominal - measured);
+    const double deviationPercent = (nominal == 0.0) ? 100.0 : (actualDeviation / nominal) * 100.0;
+    const double tolerancePercent = r.tolerance * 100.0;
+    const bool withinSpec = deviationPercent <= tolerancePercent;
 
-    return actualDeviation <= maxDeviation;
+    cout << "Label: " << r.label
+         << " | Result: " << (withinSpec ? "PASSED" : "FAILED")
+         << " | Deviation: " << deviationPercent << "%" << endl;
+
+    return withinSpec;
 }
