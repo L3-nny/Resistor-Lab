@@ -33,14 +33,26 @@ public:
     friend double acImpedance(const Resistor& r, double frequency);
     friend double voltageDrop(const Resistor& r, double current);
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
+    friend double calculateParallel(const Resistor& r1, const Resistor& r2);
+    friend double seriesCombiner(const Resistor& r1, const Resistor& r2);
     friend bool qcInspector(const Resistor& r,double measured );
 };
+
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
+    
+    double totalResistance = seriesCombiner(r1, r2);
+    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
+    cout << "Equivalent Series Resistance: " << totalResistance << " Ohms" << endl;
 
-
+    // Second test case: r1 = 1500, r2 = 2000
+    Resistor r3("R3", 1500, 0.05);
+    Resistor r4("R4", 2000, 0.10);
+    double totalResistance2 = seriesCombiner(r3, r4);
+    cout << "Circuit initialized with " << r3.getL() << " and " << r4.getL() << endl;
+    cout << "Equivalent Series Resistance: " << totalResistance2 << " Ohms" << endl;
 
     double frequency = 50;
     double Z1 = acImpedance(r1, frequency); // Calculate impedance
@@ -102,10 +114,13 @@ double testMeasured = 1040.0;
     if (!qcPassed) {
         cout << "Action: Investigate resistor deviation." << endl;
     }
-
+    cout << "Total Resistance in Series: " << totalResistance << " Ohms" << endl;
     return 0;
 }
 
+double seriesCombiner(const Resistor& r1, const Resistor& r2) {
+    return r1.resistance + r2.resistance; // Accessing private members directly
+    }
 
  //Friend function definition
 double acImpedance(const Resistor& r, double frequency) {
@@ -173,4 +188,18 @@ bool qcInspector(const Resistor& r, double measured) {
          << " | Deviation: " << deviationPercent << "%" << endl;
 
     return withinSpec;
+}
+
+//Definition of friend function calculateParallel
+double calculateParallel(const Resistor& r1, const Resistor& r2) {
+    if (r1.resistance < 0 || r2.resistance < 0) {
+        return -1.0;
+    }
+    double req;
+    if (r1.resistance + r2.resistance == 0) {
+        req = 0;
+    } else{
+        req = (r1.resistance * r2.resistance) / (r1.resistance + r2.resistance);
+    }
+    return req;
 }
