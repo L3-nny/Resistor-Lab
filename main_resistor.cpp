@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <string>
-#include <iomanip>
 #include <cmath>
 
 using namespace std;
@@ -19,7 +18,6 @@ private:
     string label;
     double resistance; // in Ohms
     double tolerance;  // e.g., 0.05 for 5%
-    double freqency;      // in Hz (for future use, currently not utilized in calculations)
 
 public:
     Resistor(string l, double r, double t) : label(l), resistance(r), tolerance(t) {}
@@ -30,38 +28,14 @@ public:
     // Declaration of the friend functions
     friend void toleranceRange(const Resistor& r, double& rMin, double& rMax);
     friend double calculatePower(double current, const Resistor& r);
-    friend double acImpedance(const Resistor& r, double frequency);
     friend double voltageDrop(const Resistor& r, double current);
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
-    friend double calculateParallel(const Resistor& r1, const Resistor& r2);
-    friend double seriesCombiner(const Resistor& r1, const Resistor& r2);
     friend bool qcInspector(const Resistor& r,double measured );
 };
-
 
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
-    
-    double totalResistance = seriesCombiner(r1, r2);
-    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
-    cout << "Equivalent Series Resistance: " << totalResistance << " Ohms" << endl;
-
-    // Second test case: r1 = 1500, r2 = 2000
-    Resistor r3("R3", 1500, 0.05);
-    Resistor r4("R4", 2000, 0.10);
-    double totalResistance2 = seriesCombiner(r3, r4);
-    cout << "Circuit initialized with " << r3.getL() << " and " << r4.getL() << endl;
-    cout << "Equivalent Series Resistance: " << totalResistance2 << " Ohms" << endl;
-
-    double frequency = 50;
-    double Z1 = acImpedance(r1, frequency); // Calculate impedance
-    double Z2 = acImpedance(r2, frequency); // Calculate impedance
-
-    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
-
-    cout << "Impedance of " << r1.getL() << ": " << Z1 << " Ohms" <<" At "<< frequency << " Hz" << endl;
-    cout << "Impedance of " << r2.getL() << ": " << Z2 << " Ohms" << " At "<< frequency << " Hz" << endl;
 
     double currentVal = 0.025; // Example: 25mA
 
@@ -104,31 +78,19 @@ double maxPowerR1 = thermalDeratedMaxPower(r1, ratedPower, temp);
 double maxPowerR2 = thermalDeratedMaxPower(r2, ratedPower, temp);
 cout<< "At " << temp << "C, max derated power for " << r1.getL() << " is " << maxPowerR1 << "W" << endl;
 cout<< "At " << temp << "C, max derated power for " << r2.getL() << " is " << maxPowerR2 << "W" << endl;
-
-    // qc_inspector
+// qc_inspector
 double testMeasured = 1040.0; 
     cout << "\n--- QC Inspection ---" << endl;
     cout << "Testing " << r1.getL() << " with measured " << testMeasured << " Ohms..." << endl;
     
-    const bool qcPassed = qcInspector(r1, testMeasured);
-    if (!qcPassed) {
-        cout << "Action: Investigate resistor deviation." << endl;
+    if (qcInspector(r1, testMeasured)) {
+        cout << "RESULT: PASSED" << endl;
+    } else {
+        cout << "RESULT: FAILED (Outside tolerance)" << endl;
     }
-    cout << "Total Resistance in Series: " << totalResistance << " Ohms" << endl;
+
     return 0;
-}
 
-double seriesCombiner(const Resistor& r1, const Resistor& r2) {
-    return r1.resistance + r2.resistance; // Accessing private members directly
-    }
-
- //Friend function definition
-double acImpedance(const Resistor& r, double frequency) {
-    const double omega = 2 * M_PI * frequency;
-    const double C = 1e-12; // 1pF
-    const double X_C = (frequency == 0) ? 0.0 : 1 / (omega * C);
-
-    return sqrt(pow(r.resistance, 2) + pow(X_C, 2));
 }
 
  //Definition of friend fuction toleranceRange
@@ -169,37 +131,13 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
 }
 
 //Definition of friend function QC inspector
-bool qcInspector(const Resistor& r, double measured) {
-    const double nominal = r.resistance;
-    if (nominal <= 0.0) {
-        cout << "Label: " << r.label
-             << " | Result: FAILED"
-             << " | Deviation: N/A" << endl;
-        return false;
-    }
+  bool qcInspector(const Resistor& r, double measured) {
+    // Logic: Is |Nominal - Measured| within (Nominal * Tolerance)?
+    double maxDeviation = r.resistance * r.tolerance;
+    double actualDeviation = abs(r.resistance - measured);
 
-    const double actualDeviation = abs(nominal - measured);
-    const double deviationPercent = (actualDeviation / nominal) * 100.0;
-    const double tolerancePercent = r.tolerance * 100.0;
-    const bool withinSpec = deviationPercent <= tolerancePercent;
-
-    cout << "Label: " << r.label
-         << " | Result: " << (withinSpec ? "PASSED" : "FAILED")
-         << " | Deviation: " << deviationPercent << "%" << endl;
-
-    return withinSpec;
+    return actualDeviation <= maxDeviation;
 }
+ 
 
-//Definition of friend function calculateParallel
-double calculateParallel(const Resistor& r1, const Resistor& r2) {
-    if (r1.resistance < 0 || r2.resistance < 0) {
-        return -1.0;
-    }
-    double req;
-    if (r1.resistance + r2.resistance == 0) {
-        req = 0;
-    } else{
-        req = (r1.resistance * r2.resistance) / (r1.resistance + r2.resistance);
-    }
-    return req;
-}
+ 
