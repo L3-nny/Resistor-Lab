@@ -30,6 +30,7 @@ public:
     // Declaration of the friend functions
     friend void toleranceRange(const Resistor& r, double& rMin, double& rMax);
     friend double calculatePower(double current, const Resistor& r);
+    friend double acImpedance(const Resistor& r, double frequency);
     friend double voltageDrop(const Resistor& r, double current);
     friend double thermalDeratedMaxPower(const Resistor& r, double ratedPowerW, double ambientTempC);
     friend bool qcInspector(const Resistor& r,double measured );
@@ -160,7 +161,4 @@ bool qcInspector(const Resistor& r, double measured) {
     double actualDeviation = abs(r.resistance - measured);
 
     return actualDeviation <= maxDeviation;
-}
-
-     
 }
