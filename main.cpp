@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <string>
+#include <iomanip>
+#include <cmath>
 
 using namespace std;
 
@@ -17,6 +19,7 @@ private:
     string label;
     double resistance; // in Ohms
     double tolerance;  // e.g., 0.05 for 5%
+    double freqency;      // in Hz (for future use, currently not utilized in calculations)
 
 public:
     Resistor(string l, double r, double t) : label(l), resistance(r), tolerance(t) {}
@@ -35,6 +38,17 @@ public:
 int main() {
     Resistor r1("R1", 1000, 0.05); // 1k Ohm
     Resistor r2("R2", 2200, 0.10); // 2.2k Ohm
+
+
+
+    double frequency = 50;
+    double Z1 = acImpedance(r1, frequency); // Calculate impedance
+    double Z2 = acImpedance(r2, frequency); // Calculate impedance
+
+    cout << "Circuit initialized with " << r1.getL() << " and " << r2.getL() << endl;
+
+    cout << "Impedance of " << r1.getL() << ": " << Z1 << " Ohms" <<" At "<< frequency << " Hz" << endl;
+    cout << "Impedance of " << r2.getL() << ": " << Z2 << " Ohms" << " At "<< frequency << " Hz" << endl;
 
     double currentVal = 0.025; // Example: 25mA
 
@@ -90,6 +104,16 @@ double testMeasured = 1040.0;
     }
 
     return 0;
+}
+
+
+ //Friend function definition
+double acImpedance(const Resistor& r, double frequency) {
+    const double omega = 2 * M_PI * frequency;
+    const double C = 1e-12; // 1pF
+    const double X_C = (frequency == 0) ? 0.0 : 1 / (omega * C);
+
+    return sqrt(pow(r.resistance, 2) + pow(X_C, 2));
 }
 
  //Definition of friend fuction toleranceRange
