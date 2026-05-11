@@ -153,8 +153,15 @@ double thermalDeratedMaxPower(const Resistor&, double ratedPowerW, double ambien
 //Definition of friend function QC inspector
 bool qcInspector(const Resistor& r, double measured) {
     const double nominal = r.resistance;
+    if (nominal <= 0.0) {
+        cout << "Label: " << r.label
+             << " | Result: FAILED"
+             << " | Deviation: N/A (invalid nominal resistance)" << endl;
+        return false;
+    }
+
     const double actualDeviation = abs(nominal - measured);
-    const double deviationPercent = (nominal == 0.0) ? 100.0 : (actualDeviation / nominal) * 100.0;
+    const double deviationPercent = (actualDeviation / nominal) * 100.0;
     const double tolerancePercent = r.tolerance * 100.0;
     const bool withinSpec = deviationPercent <= tolerancePercent;
 
